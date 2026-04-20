@@ -1,0 +1,20 @@
+# 1. 忽略 整个文件夹（结尾加 /）
+node_modules/
+dist/
+build/
+
+# 2. 忽略 某类文件（通配符 *）
+*.log       # 所有日志文件
+*.tmp       # 所有临时文件
+*.zip       # 所有压缩包
+
+# 3. 忽略 单个文件
+.env
+secret.json
+
+# 4. 系统自动生成的垃圾文件（通用）
+.DS_Store   # Mac专属缓存
+Thumbs.db   # Windows专属缓存
+
+# 5. 例外：不忽略某个文件（! 开头）
+!README.md
