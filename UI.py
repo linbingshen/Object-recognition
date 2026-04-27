@@ -479,18 +479,85 @@ class MainWindow:
 
     # 加载模型
     def load_model(self):
-        try:
-            # 更新状态
-            self.status_label.config(text="状态：正在加载模型...", fg="#f39c12")
-            self.window.update()
-            # 初始化YOLO检测器
-            self.detector = YOLODetector()
-            # 更新状态
-            self.status_label.config(text="状态：模型加载成功", fg="#27ae60")
-        except Exception as e:
-            # 显示错误信息
-            self.status_label.config(text="状态：模型加载失败", fg="#e74c3c")
-            messagebox.showerror("错误", f"模型加载失败：{str(e)}")
+        # 模型目录路径
+        models_dir = os.path.join(os.path.dirname(__file__), "models")
+        
+        # 检查目录是否存在
+        if not os.path.exists(models_dir):
+            messagebox.showwarning("提示", f"模型目录不存在：{models_dir}")
+            return
+        
+        # 读取目录中的.pt文件
+        model_files = []
+        for file in os.listdir(models_dir):
+            if file.endswith('.pt'):
+                model_files.append(file)
+        
+        if not model_files:
+            messagebox.showwarning("提示", f"模型目录中没有.pt文件：{models_dir}")
+            return
+        
+        # 创建模型选择窗口
+        model_window = tk.Toplevel(self.window)
+        model_window.title("选择模型")
+        model_window.geometry("400x300")
+        model_window.transient(self.window)
+        model_window.grab_set()
+        
+        # 模型列表
+        model_var = tk.StringVar()
+        model_var.set(model_files[0])
+        
+        # 列表框
+        listbox = tk.Listbox(model_window, font=("Microsoft YaHei", 11))
+        for model in model_files:
+            listbox.insert(tk.END, model)
+        listbox.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # 加载按钮
+        def load_selected_model():
+            selected_index = listbox.curselection()
+            if selected_index:
+                selected_model = model_files[selected_index[0]]
+                model_path = os.path.join(models_dir, selected_model)
+                
+                try:
+                    # 更新状态
+                    self.status_label.config(text="状态：正在加载模型...", fg="#f39c12")
+                    self.window.update()
+                    # 初始化YOLO检测器并加载模型
+                    self.detector = YOLODetector(model_path)
+                    # 更新状态
+                    self.status_label.config(text=f"状态：模型加载成功", fg="#27ae60")
+                    messagebox.showinfo("提示", f"模型加载成功：{selected_model}")
+                    model_window.destroy()
+                except Exception as e:
+                    # 显示错误信息
+                    self.status_label.config(text="状态：模型加载失败", fg="#e74c3c")
+                    messagebox.showerror("错误", f"模型加载失败：{str(e)}")
+                    model_window.destroy()
+        
+        # 加载按钮
+        tk.Button(
+            model_window,
+            text="加载选中模型",
+            font=("Microsoft YaHei", 12),
+            bg="#27ae60",
+            fg="white",
+            cursor="hand2",
+            command=load_selected_model
+        ).pack(pady=10, padx=10, fill=tk.X)
+        
+        # 取消按钮
+        tk.Button(
+            model_window,
+            text="取消",
+            font=("Microsoft YaHei", 12),
+            bg="#95a5a6",
+            fg="white",
+            cursor="hand2",
+            command=model_window.destroy
+        ).pack(pady=5, padx=10, fill=tk.X)
 
     # 单独检测单张图片
     def detect_single_image(self):

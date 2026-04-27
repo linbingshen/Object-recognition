@@ -1,0 +1,9 @@
+
+
+detections/
+models/
+__pycache__/
+
+users.json
+
+!README.md
