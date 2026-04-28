@@ -12,11 +12,13 @@ class LoginSystem:
         # 创建登录窗口
         self.window = tk.Tk()
         self.window.title("系统登录")
-        self.window.geometry("400x350")
-        self.window.resizable(False, False)
+        self.window.geometry("500x400")     # 登录窗口大小
+        self.window.resizable(False, False)  # 禁用窗口大小调整
+        #self.window.iconbitmap("icon.ico")  # 设置窗口图标
+       
         # 用户数据文件路径
         self.users_file = "users.json"
-        self.current_frame = None
+        self.current_frame = None  # 当前显示的框架
         # 居中窗口
         self.center_window()
         # 加载用户数据
@@ -27,14 +29,14 @@ class LoginSystem:
     # 居中窗口
     def center_window(self):
         # 更新窗口以获取正确尺寸
-        self.window.update_idletasks()
-        width = self.window.winfo_width()
-        height = self.window.winfo_height()
+        self.window.update_idletasks()  # 确保窗口尺寸更新
+        width = self.window.winfo_width()  # 获取窗口宽度
+        height = self.window.winfo_height()  # 获取窗口高度
         # 计算居中位置
         x = (self.window.winfo_screenwidth() // 2) - (width // 2)
         y = (self.window.winfo_screenheight() // 2) - (height // 2)
         # 设置窗口位置
-        self.window.geometry(f"{width}x{height}+{x}+{y}")
+        self.window.geometry(f"{width}x{height}+{x}+{y}")  # 设置窗口位置
 
     # 加载用户数据
     def load_users(self):
@@ -42,22 +44,53 @@ class LoginSystem:
         if os.path.exists(self.users_file):
             # 读取用户数据
             with open(self.users_file, "r", encoding="utf-8") as f:
-                self.users = json.load(f)
+                self.users = json.load(f)  # 将文件内容加载为Python字典对象，并且给类创建一个属性users
         else:
             # 初始化空用户数据
-            self.users = {}
+            self.users = {} 
+            #创建存储用信息的文件 
+            with open(self.users_file, "w", encoding="utf-8") as f:
+                json.dump(self.users, f, ensure_ascii=False, indent=4)
+          
 
-    # 保存用户数据
+
+    # 保存新注册的用户数据
     def save_users(self):
+        #检查用户名是否已存在
+        if self.login_username.get() in self.users:
+            messagebox.showerror("错误", "用户名已存在")
+            return
+        # 检查密码是否为空
+        if not self.login_password.get():
+            messagebox.showerror("错误", "密码不能为空")
+            return
         # 将用户数据保存到文件
         with open(self.users_file, "w", encoding="utf-8") as f:
             json.dump(self.users, f, ensure_ascii=False, indent=4)
+        # 显示成功提示
+        messagebox.showinfo("成功", "注册成功")
+        # 关闭登录窗口
+        self.window.destroy()
+        # 显示主窗口
+        self.main_window = MainWindow()
+        self.main_window.show()
+        
 
     # 显示登录框架
     def show_login_frame(self):
         # 销毁现有框架
         if self.current_frame:
             self.current_frame.destroy()
+        # 创建新的登录框架
+        self.current_frame = None
+        self.show_login_frame()
+
+    # 显示登录框架
+    def show_login_frame(self):
+        # 销毁现有框架
+        if self.current_frame:
+            self.current_frame.destroy()
+        
         # 创建新的登录框架
         self.current_frame = tk.Frame(self.window, bg="#f0f0f0")
         self.current_frame.pack(fill=tk.BOTH, expand=True)
@@ -78,8 +111,8 @@ class LoginSystem:
 
         # 用户名输入
         tk.Label(input_frame, text="用户名", font=("Microsoft YaHei", 12), bg="#f0f0f0").grid(row=0, column=0, pady=10, sticky="w")
-        self.login_username = tk.Entry(input_frame, font=("Microsoft YaHei", 12), width=20)
-        self.login_username.grid(row=0, column=1, pady=10, padx=10)
+        self.login_username = tk.Entry(input_frame, font=("Microsoft YaHei", 12), width=20)  
+        self.login_username.grid(row=0, column=1, pady=10, padx=10)  
 
         # 密码输入
         tk.Label(input_frame, text="密码", font=("Microsoft YaHei", 12), bg="#f0f0f0").grid(row=1, column=0, pady=10, sticky="w")
@@ -102,11 +135,121 @@ class LoginSystem:
             cursor="hand2",
             command=self.do_login
         )     
-        login_btn.pack(pady=10, padx=10)     # 登录按钮位置
+        login_btn.pack(pady=10, padx=10)
         # 绑定密码输入框的Return键事件
         self.login_password.bind("<Return>", lambda e: self.do_login())
-        # 绑定登录按钮点击事件
-        login_btn.bind("<Button-1>", self.do_login)
+
+        # 切换到注册链接
+        switch_label = tk.Label(
+            self.current_frame,
+            text="还没有账号？点击注册",
+            font=("Microsoft YaHei", 11),
+            bg="#f0f0f0",
+            fg="#2196F3",
+            cursor="hand2"
+        )
+        switch_label.pack(pady=5)
+        switch_label.bind("<Button-1>", lambda e: self.show_register_frame())
+
+    # 显示注册框架
+    def show_register_frame(self):
+        # 销毁现有框架
+        if self.current_frame:
+            self.current_frame.destroy()
+        
+        # 创建新的注册框架
+        self.current_frame = tk.Frame(self.window, bg="#f0f0f0")
+        self.current_frame.pack(fill=tk.BOTH, expand=True)
+
+        # 注册标题
+        title_label = tk.Label(
+            self.current_frame,
+            text="用户注册",
+            font=("Microsoft YaHei", 24, "bold"),
+            bg="#f0f0f0",
+            fg="#333"
+        )
+        title_label.pack(pady=20)
+
+        # 注册输入框框架
+        input_frame = tk.Frame(self.current_frame, bg="#f0f0f0")
+        input_frame.pack(pady=20)
+
+        # 用户名输入
+        tk.Label(input_frame, text="用户名", font=("Microsoft YaHei", 12), bg="#f0f0f0").grid(row=0, column=0, pady=10, sticky="w")
+        self.register_username = tk.Entry(input_frame, font=("Microsoft YaHei", 12), width=20)  
+        self.register_username.grid(row=0, column=1, pady=10, padx=10)  
+
+        # 密码输入
+        tk.Label(input_frame, text="密码", font=("Microsoft YaHei", 12), bg="#f0f0f0").grid(row=1, column=0, pady=10, sticky="w")
+        self.register_password = tk.Entry(input_frame, font=("Microsoft YaHei", 12), width=20, show="*")
+        self.register_password.grid(row=1, column=1, pady=10, padx=10)
+
+        # 确认密码输入
+        tk.Label(input_frame, text="确认密码", font=("Microsoft YaHei", 12), bg="#f0f0f0").grid(row=2, column=0, pady=10, sticky="w")
+        self.register_confirm = tk.Entry(input_frame, font=("Microsoft YaHei", 12), width=20, show="*")
+        self.register_confirm.grid(row=2, column=1, pady=10, padx=10)
+
+        # 注册按钮框架
+        btn_frame = tk.Frame(self.current_frame, bg="#f0f0f0")
+        btn_frame.pack(pady=10)
+
+        # 注册按钮
+        register_btn = tk.Button(
+            btn_frame,
+            text="注 册",
+            font=("Microsoft YaHei", 14),
+            width=15,
+            height=2,
+            bg="#2196F3",
+            fg="white",
+            cursor="hand2",
+            command=self.do_register
+        )     
+        register_btn.pack(pady=10, padx=10)
+
+        # 切换到登录链接
+        switch_label = tk.Label(
+            self.current_frame,
+            text="已有账号？点击登录",
+            font=("Microsoft YaHei", 11),
+            bg="#f0f0f0",
+            fg="#2196F3",
+            cursor="hand2"
+        )
+        switch_label.pack(pady=5)
+        switch_label.bind("<Button-1>", lambda e: self.show_login_frame())
+
+    # 注册按钮点击事件
+    def do_register(self):
+        # 获取用户名和密码
+        username = self.register_username.get().strip()
+        password = self.register_password.get().strip()
+        confirm = self.register_confirm.get().strip()
+
+        # 验证输入
+        if not username:
+            messagebox.showwarning("提示", "请输入用户名")
+            return
+        if not password:
+            messagebox.showwarning("提示", "请输入密码")
+            return
+        if password != confirm:
+            messagebox.showwarning("提示", "两次输入的密码不一致")
+            return
+
+        # 检查用户名是否已存在
+        if username in self.users:
+            messagebox.showwarning("提示", "用户名已存在")
+            return
+
+        # 添加新用户
+        self.users[username] = password
+        # 保存用户数据
+        self.save_users()
+        messagebox.showinfo("提示", "注册成功！请登录")
+        # 切换回登录界面
+        self.show_login_frame()
 
     # 登录按钮点击事件
     def do_login(self, event=None):
