@@ -1,0 +1,17 @@
+# 垃圾识别系统依赖配置
+# 使用方式：pip install -r requirements.txt
+
+# YOLOv8 目标检测框架（自动包含 PyTorch）
+ultralytics==8.1.0
+
+# OpenCV 图像处理库
+opencv-python==4.9.0.80
+
+# Pillow 图像库
+Pillow==10.2.0
+
+# NumPy 数值计算库
+numpy==1.26.4
+
+# Tkinter 通常是 Python 内置的，但如果需要可以手动安装
+# python3-tk 或 tkinter（根据系统而定）
