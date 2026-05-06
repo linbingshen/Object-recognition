@@ -1,3 +1,9 @@
+"""
+核心检测功能
+
+"""
+
+
 from ultralytics import YOLO
 import cv2
 import numpy as np
@@ -17,6 +23,7 @@ class YOLODetector:
         self.model = YOLO(model_path)   # 加载YOLO模型
         self.class_names = self.model.names
     
+    # 检测单张图片
     def detect_image(self, image_path, conf_threshold=0.3):
         """检测单张图片       
         Args:
@@ -46,6 +53,7 @@ class YOLODetector:
             "image": result.orig_img
         }
     
+    # 检测视频
     def detect_video(self, video_path, output_path=None, conf_threshold=0.3):
         """检测视频
      
@@ -89,6 +97,7 @@ class YOLODetector:
         
         return True
     
+    # 检测摄像头
     def detect_camera(self, camera_id=0, conf_threshold=0.3, save_path=None, max_save_count=10):
         """检测摄像头
         
@@ -170,6 +179,7 @@ class YOLODetector:
         
         return True
     
+    # 绘制检测结果
     def draw_results(self, image, results):
         """在图像上绘制检测结果
         
@@ -199,6 +209,7 @@ class YOLODetector:
         
         return image
     
+    # 批量检测文件夹中的图片和视频
     def detect_folder(self, folder_path, output_folder=None, conf_threshold=0.3):
         """批量检测文件夹中的图片和视频
         

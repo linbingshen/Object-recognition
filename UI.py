@@ -5,12 +5,17 @@ import os
 from PIL import Image, ImageTk
 from yolo_detector import YOLODetector
 
-## 登录系统类
+## 登录系统类aa
 class LoginSystem:
     # 初始化登录系统
-    def __init__(self):
+    def __init__(self): 
         # 创建登录窗口
-        self.window = tk.Tk()
+        self.window = tk.Tk()   # 创建主窗口
+        """主窗口是顶级窗口，是程序的根容器，自带标题栏和系统按钮，
+        整个 GUI 程序只能有一个主窗口，通过 mainloop () 启动事件循环。
+        而 Frame 是次级容器，没有标题栏和系统按钮，必须依附在主窗口或其他容器上，
+        主要用来分组管理组件，一个程序里可以有多个 Frame。 
+        """
         self.window.title("系统登录")
         self.window.geometry("500x400")     # 登录窗口大小
         self.window.resizable(False, False)  # 禁用窗口大小调整
@@ -18,7 +23,7 @@ class LoginSystem:
        
         # 用户数据文件路径
         self.users_file = "users.json"
-        self.current_frame = None  # 当前显示的框架
+        self.current_frame = None  # 当前显示的框架 在程序运行时，用于切换不同的界面
         # 居中窗口
         self.center_window()
         # 加载用户数据
@@ -26,7 +31,9 @@ class LoginSystem:
         # 显示登录界面
         self.show_login_frame()
 
-    # 居中窗口
+
+    # 居中窗口 
+    # __init__ 初始化时调用
     def center_window(self):
         # 更新窗口以获取正确尺寸
         self.window.update_idletasks()  # 确保窗口尺寸更新
@@ -39,6 +46,7 @@ class LoginSystem:
         self.window.geometry(f"{width}x{height}+{x}+{y}")  # 设置窗口位置
 
     # 加载用户数据
+    # __init__ 初始化时调用
     def load_users(self):
         # 检查用户文件是否存在
         if os.path.exists(self.users_file):
@@ -52,50 +60,23 @@ class LoginSystem:
             with open(self.users_file, "w", encoding="utf-8") as f:
                 json.dump(self.users, f, ensure_ascii=False, indent=4)
           
-
-
-    # 保存新注册的用户数据
-    def save_users(self):
-        #检查用户名是否已存在
-        if self.login_username.get() in self.users:
-            messagebox.showerror("错误", "用户名已存在")
-            return
-        # 检查密码是否为空
-        if not self.login_password.get():
-            messagebox.showerror("错误", "密码不能为空")
-            return
-        # 将用户数据保存到文件
-        with open(self.users_file, "w", encoding="utf-8") as f:
-            json.dump(self.users, f, ensure_ascii=False, indent=4)
-        # 显示成功提示
-        messagebox.showinfo("成功", "注册成功")
-        # 关闭登录窗口
-        self.window.destroy()
-        # 显示主窗口
-        self.main_window = MainWindow()
-        self.main_window.show()
-        
-
     # 显示登录框架
+    # __init__ 初始化时调用
     def show_login_frame(self):
-        # 销毁现有框架
-        if self.current_frame:
-            self.current_frame.destroy()
-        # 创建新的登录框架
-        self.current_frame = None
-        self.show_login_frame()
 
-    # 显示登录框架
-    def show_login_frame(self):
         # 销毁现有框架
+        #如果当前有其他框架等，就将他销毁，确保只有一个框架显示
         if self.current_frame:
             self.current_frame.destroy()
         
         # 创建新的登录框架
         self.current_frame = tk.Frame(self.window, bg="#f0f0f0")
+        #先简单布局框架，从上到下，从左到右，并且填充整个窗口
         self.current_frame.pack(fill=tk.BOTH, expand=True)
 
-        # 登录标题
+        """登陆标题
+            self.current_frame 是设置为当前显示的框架，在程序运行时，用于切换不同的界面
+        """
         title_label = tk.Label(
             self.current_frame,
             text="欢迎登录",
@@ -151,6 +132,27 @@ class LoginSystem:
         switch_label.pack(pady=5)
         switch_label.bind("<Button-1>", lambda e: self.show_register_frame())
 
+    # 保存新注册的用户数据
+    def save_users(self):
+        #检查用户名是否已存在
+        if self.login_username.get() in self.users:
+            messagebox.showerror("错误", "用户名已存在")
+            return
+        # 检查密码是否为空
+        if not self.login_password.get():
+            messagebox.showerror("错误", "密码不能为空")
+            return
+        # 将用户数据保存到文件
+        with open(self.users_file, "w", encoding="utf-8") as f:
+            json.dump(self.users, f, ensure_ascii=False, indent=4)
+        # 显示成功提示
+        messagebox.showinfo("成功", "注册成功")
+        # 关闭登录窗口
+        self.window.destroy()
+        # 显示主窗口
+        self.main_window = MainWindow()
+        self.main_window.show()
+        
     # 显示注册框架
     def show_register_frame(self):
         # 销毁现有框架
@@ -291,16 +293,11 @@ class MainWindow:
         # 获取屏幕尺寸
         screen_width = self.window.winfo_screenwidth()
         screen_height = self.window.winfo_screenheight()
-        # 设置窗口尺寸为屏幕的一半
-        self.window.geometry(f"{screen_width // 2}x{screen_height // 2}")
-        # 设置最小窗口尺寸
-        self.window.minsize(300, 200)
-        # 居中窗口
-        self.center_window()
-        # 当前内容框架
-        self.current_content = None
-
-        self.show()   # 显示主窗口
+        self.window.geometry(f"{screen_width // 2}x{screen_height // 2}")       # 设置窗口尺寸为屏幕的一半      
+        self.window.minsize(300, 200)      # 设置最小窗口尺寸     
+        self.center_window()               # 居中窗口
+        self.current_content = None        # 当前内容框架
+        self.show()                        # 显示主窗口
 
     # 居中显示主窗口
     def center_window(self):
@@ -317,7 +314,7 @@ class MainWindow:
     # 显示主界面
     def show(self):
         # 创建布局
-        self.create_layout()
+        self.create_layout()    
         # 显示工作界面
         self.show_workspace()
         # 绑定关闭事件
@@ -330,7 +327,7 @@ class MainWindow:
 
         # 顶部导航栏
         top_frame = tk.Frame(self.window, bg="#3498db", height=60)
-        top_frame.pack(side=tk.TOP, fill=tk.X)
+        top_frame.pack(side=tk.TOP, fill=tk.X)          
 
         # 系统标题
         tk.Label(
@@ -347,9 +344,9 @@ class MainWindow:
             text=f"当前用户：{self.username}",
             font=("Microsoft YaHei", 11),
             bg="#3498db",
-            fg="white"
+            fg="white"  
         )
-        user_label.pack(side=tk.RIGHT, padx=20)
+        user_label.pack(side=tk.RIGHT, padx=20)     # 设置用户信息标签的位置，在顶部导航栏的右侧
 
         # 退出登录按钮
         btn_logout = tk.Button(
@@ -374,20 +371,24 @@ class MainWindow:
         ]
 
         # 创建菜单按钮
-        for i, (text, command) in enumerate(menu_items):
-            btn = tk.Button(
+        for index, (menu_text, menu_command) in enumerate(menu_items):
+            # 判断是否为默认选中项（第一个菜单）
+            is_default_selected = (index == 0)
+            
+            # 创建菜单按钮
+            menu_btn = tk.Button(
                 sidebar_frame,
-                text=text,
+                text=menu_text,
                 font=("Microsoft YaHei", 12),
-                bg="#34495e" if i == 0 else "#2c3e50",
+                bg="#34495e" if is_default_selected else "#2c3e50",  # 默认项高亮显示
                 fg="white",
                 cursor="hand2",
-                command=command,
+                command=menu_command,
                 relief=tk.FLAT,
                 width=15,
                 height=2
             )
-            btn.pack(pady=2)
+            menu_btn.pack(pady=2)
 
         # 内容区域
         self.content_frame = tk.Frame(self.window, bg="#ecf0f1")
@@ -404,6 +405,7 @@ class MainWindow:
         # 清除当前内容
         self.clear_content()
         # 创建新的工作界面
+        #工作界面是主界面中的 “内容区域”
         self.current_content = tk.Frame(self.content_frame, bg="#ecf0f1")
         self.current_content.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
@@ -425,10 +427,9 @@ class MainWindow:
         top_frame = tk.Frame(main_frame, bg="#ecf0f1")
         top_frame.pack(side=tk.TOP, fill=tk.X, pady=10, padx=10)
 
-        # 第一行：加载模型
+        # 第一行，加载模型功能的按钮框架
         btn_frame1 = tk.Frame(top_frame, bg="#ecf0f1")
         btn_frame1.pack(side=tk.LEFT, fill=tk.Y, padx=5)
-
         # 加载模型按钮
         tk.Button(
             btn_frame1,
@@ -445,10 +446,11 @@ class MainWindow:
         btn_frame2 = tk.Frame(top_frame, bg="#ecf0f1")
         btn_frame2.pack(side=tk.LEFT, fill=tk.Y, padx=5)
 
-        # 文件检测下拉菜单
+        """文件检测下拉菜单
+            减少按钮的个数
+            使得用户操作更方便"""
         file_detect_var = tk.StringVar()
-        file_detect_var.set("文件检测")
-        
+        file_detect_var.set("文件检测")       
         file_detect_menu = tk.OptionMenu(btn_frame2, file_detect_var, "图片检测", "视频检测", "文件夹检测")
         file_detect_menu.config(
             font=("Microsoft YaHei", 11),
@@ -459,7 +461,7 @@ class MainWindow:
         )
         file_detect_menu.pack(side=tk.TOP, pady=5)
 
-        # 执行文件检测按钮
+        # 进行功能选择函数，在按钮中调用
         def execute_file_detect():
             detect_type = file_detect_var.get()
             if detect_type == "图片检测":
@@ -469,6 +471,7 @@ class MainWindow:
             elif detect_type == "文件夹检测":
                 self.detect_folder()
 
+        # 执行文件检测按钮
         tk.Button(
             btn_frame2,
             text="执行检测",
