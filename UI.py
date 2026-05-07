@@ -11,11 +11,11 @@ class LoginSystem:
     def __init__(self): 
         # 创建登录窗口
         self.window = tk.Tk()   # 创建主窗口
-        """主窗口是顶级窗口，是程序的根容器，自带标题栏和系统按钮，
-        整个 GUI 程序只能有一个主窗口，通过 mainloop () 启动事件循环。
-        而 Frame 是次级容器，没有标题栏和系统按钮，必须依附在主窗口或其他容器上，
-        主要用来分组管理组件，一个程序里可以有多个 Frame。 
-        """
+        # """主窗口是顶级窗口，是程序的根容器，自带标题栏和系统按钮，
+        # 整个 GUI 程序只能有一个主窗口，通过 mainloop () 启动事件循环。
+        # 而 Frame 是次级容器，没有标题栏和系统按钮，必须依附在主窗口或其他容器上，
+        # 主要用来分组管理组件，一个程序里可以有多个 Frame。 
+        # """
         self.window.title("系统登录")
         self.window.geometry("500x400")     # 登录窗口大小
         self.window.resizable(False, False)  # 禁用窗口大小调整
@@ -63,9 +63,20 @@ class LoginSystem:
     # 显示登录框架
     # __init__ 初始化时调用
     def show_login_frame(self):
+        # """显示登陆框架
+        # 销毁当前框架，确保只有一个框架显示在屏幕上
+        # 创建新的登录框架       
+        # 添加登陆标题
+        # 添加登陆输入框
+        #     用户名输入
+        #     密码输入
+        # 添加登陆按钮
+        # 添加退出按钮
+        #        """
+
 
         # 销毁现有框架
-        #如果当前有其他框架等，就将他销毁，确保只有一个框架显示
+        #如果当前有其他框架等，就将他销毁，确保只有一个框架显
         if self.current_frame:
             self.current_frame.destroy()
         
@@ -74,9 +85,8 @@ class LoginSystem:
         #先简单布局框架，从上到下，从左到右，并且填充整个窗口
         self.current_frame.pack(fill=tk.BOTH, expand=True)
 
-        """登陆标题
-            self.current_frame 是设置为当前显示的框架，在程序运行时，用于切换不同的界面
-        """
+        # 登陆标题
+        #     self.current_frame 是设置为当前显示的框架，在程序运行时，用于切换不同的界面
         title_label = tk.Label(
             self.current_frame,
             text="欢迎登录",
@@ -322,6 +332,17 @@ class MainWindow:
 
     # 创建主界面布局
     def create_layout(self):
+        """主要内容布局
+        设置窗口背景
+        顶部导航栏
+        系统标题
+        当前用户信息
+        退出登录按钮
+        侧边栏
+        菜单按钮
+        工作界面
+        """
+
         # 设置窗口背景
         self.window.configure(bg="#ecf0f1")
 
@@ -401,7 +422,22 @@ class MainWindow:
             self.current_content.destroy()
 
     # 显示工作界面
-    def show_workspace(self):
+    def show_workspace(self): 
+        """显示工作界面
+        清除当前内容
+        创建新的工作界面
+        布局框架
+        添加标题
+        添加主框架
+        添加顶部按钮区域
+        添加加载模型按钮
+        添加文件检测下拉菜单
+        添加文件检测按钮
+        添加文件夹检测按钮
+        """
+      
+        
+        
         # 清除当前内容
         self.clear_content()
         # 创建新的工作界面
@@ -423,81 +459,147 @@ class MainWindow:
         main_frame = tk.Frame(self.current_content, bg="#ecf0f1")
         main_frame.pack(fill=tk.BOTH, expand=True)
 
-        # 顶部按钮区域
+        # 顶部按钮区域（使用grid布局确保对齐）
         top_frame = tk.Frame(main_frame, bg="#ecf0f1")
         top_frame.pack(side=tk.TOP, fill=tk.X, pady=10, padx=10)
 
-        # 第一行，加载模型功能的按钮框架
-        btn_frame1 = tk.Frame(top_frame, bg="#ecf0f1")
-        btn_frame1.pack(side=tk.LEFT, fill=tk.Y, padx=5)
-        # 加载模型按钮
-        tk.Button(
-            btn_frame1,
+        # 第一列：加载模型
+        load_model_btn = tk.Button(
+            top_frame,
             text="加载模型",
             font=("Microsoft YaHei", 12),
             bg="#9b59b6",
             fg="white",
             cursor="hand2",
             width=12,
+            height=2,
+            anchor=tk.CENTER,
             command=self.load_model
-        ).pack(side=tk.TOP, pady=5)
-
-        # 第二行：文件检测
-        btn_frame2 = tk.Frame(top_frame, bg="#ecf0f1")
-        btn_frame2.pack(side=tk.LEFT, fill=tk.Y, padx=5)
-
-        """文件检测下拉菜单
-            减少按钮的个数
-            使得用户操作更方便"""
-        file_detect_var = tk.StringVar()
-        file_detect_var.set("文件检测")       
-        file_detect_menu = tk.OptionMenu(btn_frame2, file_detect_var, "图片检测", "视频检测", "文件夹检测")
-        file_detect_menu.config(
-            font=("Microsoft YaHei", 11),
-            bg="#3498db",
-            fg="white",
-            width=12,
-            cursor="hand2"
         )
-        file_detect_menu.pack(side=tk.TOP, pady=5)
+        load_model_btn.grid(row=1, column=0, padx=15, pady=5)
 
-        # 进行功能选择函数，在按钮中调用
-        def execute_file_detect():
-            detect_type = file_detect_var.get()
-            if detect_type == "图片检测":
-                self.detect_single_image()
-            elif detect_type == "视频检测":
-                self.detect_video()
-            elif detect_type == "文件夹检测":
-                self.detect_folder()
-
-        # 执行文件检测按钮
-        tk.Button(
-            btn_frame2,
-            text="执行检测",
+        # 第二列：文件检测（选择类型+选择文件+开始检测）
+        self.selected_detect_type = ""
+        self.selected_file_path = ""
+        
+        # 检测类型选择按钮
+        def show_detect_menu(event):
+            detect_menu = tk.Menu(self.window, tearoff=0)
+            
+            def select_image_detect():
+                self.selected_detect_type = "图片检测"
+                path = filedialog.askopenfilename(
+                    title="选择图片",
+                    filetypes=[("图片文件", "*.jpg *.jpeg *.png *.bmp"), ("所有文件", "*.*")]
+                )
+                if path:
+                    self.selected_file_path = path
+                    detect_btn.config(text="已选择图片")
+            
+            def select_video_detect():
+                self.selected_detect_type = "视频检测"
+                path = filedialog.askopenfilename(
+                    title="选择视频",
+                    filetypes=[("视频文件", "*.mp4 *.avi *.mov"), ("所有文件", "*.*")]
+                )
+                if path:
+                    self.selected_file_path = path
+                    detect_btn.config(text="已选择视频")
+            
+            def select_folder_detect():
+                self.selected_detect_type = "文件夹检测"
+                path = filedialog.askdirectory(title="选择文件夹")
+                if path:
+                    self.selected_file_path = path
+                    detect_btn.config(text="已选择文件夹")
+            
+            detect_menu.add_command(label="图片检测", command=select_image_detect)
+            detect_menu.add_command(label="视频检测", command=select_video_detect)
+            detect_menu.add_command(label="文件夹检测", command=select_folder_detect)
+            detect_menu.post(event.x_root, event.y_root)
+        
+        detect_btn = tk.Button(
+            top_frame,
+            text="选择检测",
             font=("Microsoft YaHei", 12),
             bg="#3498db",
             fg="white",
             cursor="hand2",
             width=12,
-            command=execute_file_detect
-        ).pack(side=tk.TOP, pady=5)
+            height=2,
+            anchor=tk.CENTER
+        )
+        detect_btn.grid(row=1, column=1, padx=15, pady=2)
+        detect_btn.bind("<Button-1>", show_detect_menu)
+        
+        # 开始检测按钮（可切换开始/终止）
+        self.is_detecting = False
+        
+        def toggle_detection():
+            if not self.is_detecting:
+                # 开始检测
+                if not hasattr(self, 'detector'):
+                    messagebox.showwarning("提示", "请先加载模型")
+                    return
+                
+                if not self.selected_file_path:
+                    messagebox.showwarning("提示", "请先选择要检测的文件或文件夹")
+                    return
+                
+                # 切换按钮状态
+                self.is_detecting = True
+                start_btn.config(text="终止检测", bg="#e74c3c")
+                
+                # 执行检测
+                if self.selected_detect_type == "图片检测":
+                    self.detect_single_image_with_path(self.selected_file_path)
+                elif self.selected_detect_type == "视频检测":
+                    self.detect_video_with_path(self.selected_file_path)
+                elif self.selected_detect_type == "文件夹检测":
+                    self.detect_folder_with_path(self.selected_file_path)
+                
+                # 检测完成后恢复按钮状态
+                self.is_detecting = False
+                start_btn.config(text="开始检测", bg="#27ae60")
+                
+                # 重置选择状态
+                self.selected_detect_type = ""
+                self.selected_file_path = ""
+                detect_btn.config(text="选择检测")
+            else:
+                # 终止检测（预留接口）
+                self.is_detecting = False
+                start_btn.config(text="开始检测", bg="#27ae60")
+                messagebox.showinfo("提示", "检测已终止")
+        
+        start_btn = tk.Button(
+            top_frame,
+            text="开始检测",
+            font=("Microsoft YaHei", 12),
+            bg="#27ae60",
+            fg="white",
+            cursor="hand2",
+            width=12,
+            height=2,
+            anchor=tk.CENTER,
+            command=toggle_detection
+        )
+        start_btn.grid(row=2, column=1, padx=15, pady=2)
 
-        # 第三行：实时检测
-        btn_frame3 = tk.Frame(top_frame, bg="#ecf0f1")
-        btn_frame3.pack(side=tk.LEFT, fill=tk.Y, padx=5)
-
-        # 摄像头检测按钮
-        tk.Button(
-            btn_frame3,
+        # 第三列：实时检测（摄像头）
+        camera_btn = tk.Button(
+            top_frame,
             text="实时检测（摄像头）",
             font=("Microsoft YaHei", 12),
             bg="#e74c3c",
             fg="white",
             cursor="hand2",
             width=15,
+            height=2,
+            anchor=tk.CENTER,
             command=self.detect_camera
-        ).pack(side=tk.TOP, pady=5)
+        )
+        camera_btn.grid(row=1, column=2, padx=15, pady=5)
 
         # 中间区域：预览和结果
         center_frame = tk.Frame(main_frame, bg="#ecf0f1")
@@ -705,24 +807,65 @@ class MainWindow:
             command=model_window.destroy
         ).pack(pady=5, padx=10, fill=tk.X)
 
-    # 单独检测单张图片
+    # 单独检测单张图片（带路径参数）
+    def detect_single_image_with_path(self, image_path):
+        # 获取图片所在目录
+        image_dir = os.path.dirname(image_path)
+        default_save_path = os.path.join(image_dir, "detection_results")
+
+        try:
+            self.status_label.config(text="状态：正在检测图片...", fg="#f39c12")
+            self.window.update()
+
+            result = self.detector.detect_image(image_path)
+
+            self.result_text.delete(1.0, tk.END)
+            self.result_text.insert(tk.END, f"图片检测结果：\n\n")
+            self.result_text.insert(tk.END, f"文件：{os.path.basename(image_path)}\n\n")
+
+            if result['objects']:
+                self.result_text.insert(tk.END, f"检测到 {len(result['objects'])} 个物体：\n\n")
+                for obj in result['objects']:
+                    self.result_text.insert(tk.END, f"• {obj['class']} (置信度: {obj['confidence']:.2%})\n")
+                
+                if not os.path.exists(default_save_path):
+                    os.makedirs(default_save_path)
+                
+                timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+                save_filename = f"detection_{timestamp}.jpg"
+                save_filepath = os.path.join(default_save_path, save_filename)
+                
+                cv2.imwrite(save_filepath, result['image'])
+                
+                self.result_text.insert(tk.END, f"\n===== 保存结果 =====\n")
+                self.result_text.insert(tk.END, f"保存路径：{default_save_path}\n")
+                self.result_text.insert(tk.END, f"保存文件名：{save_filename}\n")
+                self.result_text.insert(tk.END, f"完整路径：{save_filepath}\n")
+                self.result_text.insert(tk.END, f"=================\n")
+            
+            self.status_label.config(text="状态：图片检测完成", fg="#27ae60")
+            messagebox.showinfo("提示", f"图片检测完成！\n结果已保存到：{default_save_path}")
+        except Exception as e:
+            self.status_label.config(text="状态：图片检测失败", fg="#e74c3c")
+            messagebox.showerror("错误", f"图片检测失败：{str(e)}")
+
+    # 单独检测单张图片（弹出选择对话框）
     def detect_single_image(self):
-        # 检查模型是否加载
         if not hasattr(self, 'detector'):
             messagebox.showwarning("提示", "请先加载模型")
             return
 
-        # 选择图片文件
         image_path = filedialog.askopenfilename(
             title="选择图片",
             filetypes=[("图片文件", "*.jpg *.jpeg *.png *.bmp"), ("所有文件", "*.*")]
         )
-        if not image_path:
-            return
+        if image_path:
+            self.detect_single_image_with_path(image_path)
 
+    # 图片检测核心逻辑
+    def _detect_image_core(self, image_path):
         # 获取图片所在目录
         image_dir = os.path.dirname(image_path)
-        # 设置默认保存路径为图片目录下的 detection_results 文件夹
         default_save_path = os.path.join(image_dir, "detection_results")
 
         try:
@@ -822,6 +965,77 @@ class MainWindow:
                 # 显示错误信息
                 self.status_label.config(text="状态：视频检测失败", fg="#e74c3c")
                 messagebox.showerror("错误", f"视频检测失败：{str(e)}")
+
+    # 视频检测（带路径参数）
+    def detect_video_with_path(self, video_path):
+        video_dir = os.path.dirname(video_path)
+        default_save_path = os.path.join(video_dir, "detection_results")
+        
+        if not os.path.exists(default_save_path):
+            os.makedirs(default_save_path)
+        
+        video_name = os.path.basename(video_path)
+        output_video_name = f"{os.path.splitext(video_name)[0]}_result.avi"
+        output_video_path = os.path.join(default_save_path, output_video_name)
+        
+        try:
+            self.status_label.config(text="状态：正在检测视频...", fg="#f39c12")
+            self.window.update()
+            
+            self.detector.detect_video(video_path, output_video_path)
+            
+            self.status_label.config(text="状态：视频检测完成", fg="#27ae60")
+            
+            self.result_text.delete(1.0, tk.END)
+            self.result_text.insert(tk.END, "视频检测结果：\n\n")
+            self.result_text.insert(tk.END, f"视频文件：{os.path.basename(video_path)}\n\n")
+            self.result_text.insert(tk.END, "===== 保存结果 =====\n")
+            self.result_text.insert(tk.END, f"保存路径：{default_save_path}\n")
+            self.result_text.insert(tk.END, f"保存文件名：{output_video_name}\n")
+            self.result_text.insert(tk.END, f"完整路径：{output_video_path}\n")
+            self.result_text.insert(tk.END, f"=================\n")
+            
+            messagebox.showinfo("提示", f"视频检测完成！\n结果已保存到：{output_video_path}")
+        except Exception as e:
+            self.status_label.config(text="状态：视频检测失败", fg="#e74c3c")
+            messagebox.showerror("错误", f"视频检测失败：{str(e)}")
+
+    # 文件夹检测（带路径参数）
+    def detect_folder_with_path(self, folder_path):
+        folder_dir = os.path.dirname(folder_path) if folder_path else os.getcwd()
+        default_save_path = os.path.join(folder_dir, "detection_results")
+        
+        if not os.path.exists(default_save_path):
+            os.makedirs(default_save_path)
+
+        try:
+            self.status_label.config(text="状态：正在批量检测文件夹...", fg="#f39c12")
+            self.window.update()
+
+            result = self.detector.detect_folder(folder_path, default_save_path)
+            
+            self.result_text.delete(1.0, tk.END)
+            self.result_text.insert(tk.END, "文件夹检测结果：\n\n")
+            
+            self.result_text.insert(tk.END, f"总文件数：{result['total_files']}\n")
+            self.result_text.insert(tk.END, f"检测到的物体数：{result['detected_objects']}\n\n")
+            
+            self.result_text.insert(tk.END, "===== 保存结果 =====\n")
+            self.result_text.insert(tk.END, f"保存路径：{default_save_path}\n")
+            self.result_text.insert(tk.END, f"=================\n\n")
+            
+            self.result_text.insert(tk.END, "详细结果：\n")
+            for file, file_result in result['results'].items():
+                if isinstance(file_result, list):
+                    self.result_text.insert(tk.END, f"• {file}: 检测到 {len(file_result)} 个物体\n")
+                else:
+                    self.result_text.insert(tk.END, f"• {file}: {file_result}\n")
+
+            self.status_label.config(text="状态：文件夹检测完成", fg="#27ae60")
+            messagebox.showinfo("提示", f"文件夹检测完成！\n总文件数：{result['total_files']}\n检测到的物体数：{result['detected_objects']}\n结果已保存到：{default_save_path}")
+        except Exception as e:
+            self.status_label.config(text="状态：文件夹检测失败", fg="#e74c3c")
+            messagebox.showerror("错误", f"文件夹检测失败：{str(e)}")
 
     # 摄像头检测
     def detect_camera(self):

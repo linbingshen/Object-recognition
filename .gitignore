@@ -1,11 +1,9 @@
-#禁止push的文件
-__pycache__/
+
+
 detections/
 models/
-#不上传pt文件
-*.pt
-#不上传 json文件
-*.json
+__pycache__/
 
-#上传readme文件
+users.json
+
 !README.md
